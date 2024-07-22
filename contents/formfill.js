@@ -1,11 +1,10 @@
-// import { Storage } from "@plasmohq/storage"
+import { Storage } from "@plasmohq/storage"
 
-// const storage = new Storage()
+const storage = new Storage()
 
 export const config = {
-  matches: ["https://programari.gov.md/en/maeie/appointments*"],
-  all_frames: true,
-  world: "MAIN"
+  matches: ["https://programari.gov.md/en/maeie/appointments*"]
+  
 }
 
 console.log("in formfill")
@@ -130,22 +129,59 @@ async function finddateandtimeslot(dateValue) {
   }, 4000)
 }
 
-function timeSelect() {
+function timeSelect(menu) {
   let scrollbar = menu.querySelector("ng-scrollbar")
+  console.log("scrollbar", scrollbar)
   let mwl_calendar_week = scrollbar.querySelector(
     'mwl-calendar-day-view > mwl-calendar-week-view > div[role="grid"]'
   )
   console.log("mwl_calendar_week", mwl_calendar_week)
 
-  mwldroppable = mwl_calendar_week.querySelector(
-    'div > div[class="cal-day-columns] > div'
-  )
-  console.log(mwldroppable)
+  mwldroppable = mwl_calendar_week.querySelector('div[class="cal-time-events"]')
+  console.log("mwldroppable", mwldroppable)
 
-  let presenthour = mwldroppable.querySelector(
-    'div[class*="cal-hour"] > mwl-calendar-week-view-hour-segment > div > div > span[class="badge"]'
-  )
-  console.log(presenthour)
+  let presenthour = mwldroppable.querySelectorAll('div[class*="cal-hour"]')
+
+  console.log("presenthour", presenthour)
+  presenthour.forEach((eachtimeavailcheck) => {
+    let time = eachtimeavailcheck.querySelector(
+      'mwl-calendar-week-view-hour-segment > div[class*="time-cell"]'
+    )
+    console.log(time)
+
+    let badge = time.querySelector('span[class="badge"]')
+    if(badge) {
+    console.log("badge", badge)
+    time.click()
+    }
+  })
+
+  setTimeout(() => {
+    let main = document.querySelector('main[role="main"] > eap-appointments > div[class*="container"]')
+    console.log("main", main)
+    let button = main.querySelector('div[class="content"]')
+    console.log("buttonforsubmit", button)
+    let buttonselect = button.querySelector('div[class="left"]')
+    let submit = buttonselect.querySelector("button[mat-raised-button]")
+    console.log(submit)
+    if (submit) {
+      try {
+        submit.click()
+        // setTimeout(() => {
+        // //   alert("form filled successfully")
+        //   window.close()
+        // }, 20000)
+        // Programmatically click the submit button
+      } catch (error) {
+        console.log("here inside error")
+        console.error(error)
+        window.close()
+      }
+    } else {
+      console.error("Submit button not found in the form.")
+    }
+  }, 1000)
+  return
 }
 
 async function waitForDateValue(founddate) {
@@ -181,19 +217,19 @@ async function waitForDateValue(founddate) {
 }
 
 async function fillsandsubmitsvalue() {
-  // let pageIdentifier = sessionStorage.getItem('pageIdentifier');
+  let pageIdentifier = sessionStorage.getItem('pageIdentifier');
 
-  // if (!pageIdentifier) {
-  //   pageIdentifier = generateUniqueIdentifier();
-  //   sessionStorage.setItem('pageIdentifier', pageIdentifier);
-  // }
+  if (!pageIdentifier) {
+    pageIdentifier = generateUniqueIdentifier();
+    sessionStorage.setItem('pageIdentifier', pageIdentifier);
+  }
 
-  // const val = await getUniqueArray();
-  // if (!val) {
-  //   alert('fill the values in excel sheet and then retry')
-  //   console.error('No unique array found.');
-  //   window.close()
-  // }
+  const val = await getUniqueArray();
+  if (!val) {
+    alert('fill the values in excel sheet and then retry')
+    console.error('No unique array found.');
+    window.close()
+  }
 
   setTimeout(() => {
     console.log("here inside timeout")
@@ -257,16 +293,15 @@ async function fillsandsubmitsvalue() {
               let input = label.querySelector("input")
 
               console.log(input)
-              input.value = "krishna"
-              //   val.Firstname
+              input.value =  val.Firstname
               input.dispatchEvent(new Event("input", { bubbles: true }))
               input.dispatchEvent(new Event("change", { bubbles: true }))
             } else if (label.innerText.includes("Last name*")) {
               let input = label.querySelector("input")
 
               console.log(input)
-              input.value = "lala"
-              //   val.Lastname
+              input.value = val.Lastname
+                
               input.dispatchEvent(new Event("input", { bubbles: true }))
               input.dispatchEvent(new Event("change", { bubbles: true }))
             }
@@ -280,16 +315,16 @@ async function fillsandsubmitsvalue() {
               let input = label.querySelector("input")
 
               console.log(input)
-              input.value = "1123456789"
-              //   val.Passportnumber
+              input.value = val.Passportnumber
+                
               input.dispatchEvent(new Event("input", { bubbles: true }))
               input.dispatchEvent(new Event("change", { bubbles: true }))
             } else if (label.innerText.includes("Residence address")) {
               let input = label.querySelector("input")
 
               console.log(input)
-              input.value = "matura"
-              //   val.Residenceaddress
+              input.value = val.Residenceaddress
+                
               input.dispatchEvent(new Event("input", { bubbles: true }))
               input.dispatchEvent(new Event("change", { bubbles: true }))
             }
@@ -307,16 +342,16 @@ async function fillsandsubmitsvalue() {
               let input = label.querySelector("input")
 
               console.log(input)
-              input.value = "9263744404"
-              //   val.phone
+              input.value = val.phone
+                
               input.dispatchEvent(new Event("input", { bubbles: true }))
               input.dispatchEvent(new Event("change", { bubbles: true }))
             } else if (label.innerText.includes("Email*")) {
               let input = label.querySelector("input")
 
               console.log(input)
-              input.value = "kanha@getMaxListeners.com"
-              //   val.email
+              input.value = val.email
+                
               input.dispatchEvent(new Event("input", { bubbles: true }))
               input.dispatchEvent(new Event("change", { bubbles: true }))
             }
@@ -413,6 +448,7 @@ async function fillsandsubmitsvalue() {
                     console.error(error)
                   })
 
+                console.log("out on async await")
                 // if (founddate) {
                 //   const observer = new MutationObserver(
                 //     (mutationsList, observer) => {
@@ -499,11 +535,11 @@ async function fillsandsubmitsvalue() {
 }
 
 window.addEventListener("load", () => {
-  let buttonclicked = false
+  
   fillsandsubmitsvalue()
   setInterval(() => {
-    if (buttonclicked) {
-      window.location.href = window.location.href
-    }
+    
+      window.location.href = "https://programari.gov.md/en/maeie/appointments/69a7a79e-b44c-49de-8e96-0ccfb564f65a"
+   
   }, 20000)
 })
